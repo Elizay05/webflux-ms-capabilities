@@ -77,8 +77,8 @@ public class CapabilityUseCase implements ICapabilityServicePort {
     }
 
     @Override
-    public Mono<CapabilityPageModel> getCapabilities(int page, int size, boolean asc) {
-        return capabilityPersistencePort.getAllCapabilities(page, size, asc)
+    public Mono<CapabilityPageModel> getCapabilities(int page, int size, boolean asc, String sortBy) {
+        return capabilityPersistencePort.getAllCapabilities(page, size, asc, sortBy)
                 .flatMap(capabilityPageModel -> {
                     List<Long> technologyIds = capabilityPageModel.getCapabilities().stream()
                             .flatMap(cap -> cap.getTechnologies().stream().map(TechnologyModel::getId))

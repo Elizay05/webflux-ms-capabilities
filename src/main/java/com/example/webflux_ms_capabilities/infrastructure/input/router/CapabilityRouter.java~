@@ -8,7 +8,6 @@ import com.example.webflux_ms_capabilities.infrastructure.input.handler.Capabili
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +23,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import java.util.List;
 
 import static com.example.webflux_ms_capabilities.infrastructure.input.util.constants.ConstantsInput.*;
 
@@ -132,7 +132,7 @@ public class CapabilityRouter {
                                             description = RESP_CAPABILITIES_LIST_BY_IDS,
                                             content = @Content(
                                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                                    array = @ArraySchema(schema = @Schema(implementation = CapabilityResponse.class))
+                                                    schema = @Schema(implementation = List.class, type = CapabilityRequest.class)
                                             )
                                     ),
                                     @ApiResponse(responseCode = CODE_400,

@@ -10,7 +10,6 @@ import com.example.webflux_ms_capabilities.domain.model.CapabilityPageModel;
 import com.example.webflux_ms_capabilities.domain.model.TechnologyModel;
 import com.example.webflux_ms_capabilities.domain.spi.ICapabilityPersistencePort;
 import com.example.webflux_ms_capabilities.domain.spi.ITechnologyPersistencePort;
-import org.springframework.data.domain.Page;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
