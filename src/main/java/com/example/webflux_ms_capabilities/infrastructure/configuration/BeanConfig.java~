@@ -2,7 +2,6 @@ package com.example.webflux_ms_capabilities.infrastructure.configuration;
 
 import com.example.webflux_ms_capabilities.application.handler.ICapabilityRestHandler;
 import com.example.webflux_ms_capabilities.application.handler.impl.CapabilityRestHandlerImpl;
-import com.example.webflux_ms_capabilities.application.mapper.ICapabilityPageResponseMapper;
 import com.example.webflux_ms_capabilities.application.mapper.ICapabilityRequestMapper;
 import com.example.webflux_ms_capabilities.application.mapper.ICapabilityResponseMapper;
 import com.example.webflux_ms_capabilities.domain.api.ICapabilityServicePort;
@@ -27,7 +26,6 @@ public class BeanConfig {
     private final ICapabilityEntityMapper capabilityEntityMapper;
     private final ICapabilityRequestMapper capabilityRequestMapper;
     private final ICapabilityResponseMapper capabilityResponseMapper;
-    private final ICapabilityPageResponseMapper capabilityPageResponseMapper;
 
     @Bean
     public ICapabilityServicePort capabilityServicePort(ICapabilityPersistencePort capabilityPersistencePort,
@@ -47,6 +45,6 @@ public class BeanConfig {
 
     @Bean
     public ICapabilityRestHandler capabilityRestHandler(ICapabilityServicePort capabilityServicePort) {
-        return new CapabilityRestHandlerImpl(capabilityServicePort, capabilityRequestMapper, capabilityResponseMapper, capabilityPageResponseMapper);
+        return new CapabilityRestHandlerImpl(capabilityServicePort, capabilityRequestMapper, capabilityResponseMapper);
     }
 }
