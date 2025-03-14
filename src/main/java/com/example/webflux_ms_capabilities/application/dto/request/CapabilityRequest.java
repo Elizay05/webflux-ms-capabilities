@@ -8,16 +8,18 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static com.example.webflux_ms_capabilities.application.utils.constants.ConstantsApplication.*;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class CapabilityRequest {
-    @NotBlank(message = "es requerido")
+    @NotBlank(message = IS_REQUIRED)
     private String name;
 
-    @NotBlank(message = "es requerido")
+    @NotBlank(message = IS_REQUIRED)
     private String description;
 
-    @Size(min = 3, max = 20, message = "Las tecnologías deben estar entre 3 y 20")
+    @Size(min = MIN_SIZE_TECHNOLOGIES, max = MAX_SIZE_TECHNOLOGIES, message = SIZE_TECHNOLOGIES)
     private List<Long> technologies;
 }
