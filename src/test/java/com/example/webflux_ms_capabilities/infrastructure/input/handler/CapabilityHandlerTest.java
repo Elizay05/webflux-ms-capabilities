@@ -2,6 +2,7 @@ package com.example.webflux_ms_capabilities.infrastructure.input.handler;
 
 import com.example.webflux_ms_capabilities.application.dto.request.CapabilityIdsRequest;
 import com.example.webflux_ms_capabilities.application.dto.request.CapabilityRequest;
+import com.example.webflux_ms_capabilities.application.dto.response.CapabilityPageResponse;
 import com.example.webflux_ms_capabilities.application.dto.response.CapabilityResponse;
 import com.example.webflux_ms_capabilities.application.handler.ICapabilityRestHandler;
 import jakarta.validation.ConstraintViolation;
@@ -89,6 +90,25 @@ public class CapabilityHandlerTest {
 
         Mockito.verify(validator).validate(any(CapabilityRequest.class));
         Mockito.verify(capabilityRestHandler, Mockito.never()).createCapability(any(CapabilityRequest.class));
+    }
+
+    @Test
+    public void test_get_capabilities_returns_ok_response() {
+        ServerRequest request = MockServerRequest.builder().build();
+        CapabilityPageResponse pageResponse = new CapabilityPageResponse();
+        Mockito.when(capabilityRestHandler.getCapabilities(request)).thenReturn(Mono.just(pageResponse));
+
+        // Act
+        Mono<ServerResponse> result = capabilityHandler.getCapabilities(request);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(response -> {
+                    assertEquals(HttpStatus.OK, response.statusCode());
+                    assertEquals(MediaType.APPLICATION_JSON, response.headers().getContentType());
+                    return true;
+                })
+                .verifyComplete();
     }
 
     @Test

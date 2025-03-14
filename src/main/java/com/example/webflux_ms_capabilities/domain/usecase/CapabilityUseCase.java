@@ -6,9 +6,11 @@ import com.example.webflux_ms_capabilities.domain.exceptions.DuplicateTechnologi
 import com.example.webflux_ms_capabilities.domain.exceptions.MaxTechnologiesCapabilityException;
 import com.example.webflux_ms_capabilities.domain.exceptions.MinTechnologiesCapabilityException;
 import com.example.webflux_ms_capabilities.domain.model.CapabilityModel;
+import com.example.webflux_ms_capabilities.domain.model.CapabilityPageModel;
 import com.example.webflux_ms_capabilities.domain.model.TechnologyModel;
 import com.example.webflux_ms_capabilities.domain.spi.ICapabilityPersistencePort;
 import com.example.webflux_ms_capabilities.domain.spi.ITechnologyPersistencePort;
+import org.springframework.data.domain.Page;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -72,6 +74,34 @@ public class CapabilityUseCase implements ICapabilityServicePort {
 
     private Mono<Boolean> existCapability(String capabilityName) {
         return capabilityPersistencePort.existCapabilityByName(capabilityName);
+    }
+
+    @Override
+    public Mono<CapabilityPageModel> getCapabilities(int page, int size, boolean asc, String sortBy) {
+        return capabilityPersistencePort.getAllCapabilities(page, size, asc, sortBy)
+                .flatMap(capabilityPageModel -> {
+                    List<Long> technologyIds = capabilityPageModel.getCapabilities().stream()
+                            .flatMap(cap -> cap.getTechnologies().stream().map(TechnologyModel::getId))
+                            .distinct()
+                            .toList();
+
+                    if (technologyIds.isEmpty()) {
+                        return Mono.just(capabilityPageModel);
+                    }
+                    return technologyPersistencePort.getTechnologiesByIds(technologyIds)
+                            .map(technologyList -> {
+                                Map<Long, TechnologyModel> technologyMap = technologyList.stream()
+                                        .collect(Collectors.toMap(TechnologyModel::getId, tech -> tech));
+
+                                capabilityPageModel.getCapabilities().forEach(capability ->
+                                        capability.setTechnologies(capability.getTechnologies().stream()
+                                                .map(tech -> technologyMap.getOrDefault(tech.getId(), tech))
+                                                .toList())
+                                );
+
+                                return capabilityPageModel;
+                            });
+                });
     }
 
     @Override

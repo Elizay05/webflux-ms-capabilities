@@ -44,6 +44,13 @@ public class CapabilityHandler {
                 });
     }
 
+    public Mono<ServerResponse> getCapabilities(ServerRequest request) {
+        return capabilityRestHandler.getCapabilities(request)
+                .flatMap(capabilityPage -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(capabilityPage));
+    }
+
     public Mono<ServerResponse> getCapabilitiesByIds(ServerRequest request) {
         return request.bodyToMono(CapabilityIdsRequest.class)
                 .flatMap(capabilityIdsRequest ->

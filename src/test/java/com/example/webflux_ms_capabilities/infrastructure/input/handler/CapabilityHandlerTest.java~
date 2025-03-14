@@ -1,6 +1,8 @@
 package com.example.webflux_ms_capabilities.infrastructure.input.handler;
 
+import com.example.webflux_ms_capabilities.application.dto.request.CapabilityIdsRequest;
 import com.example.webflux_ms_capabilities.application.dto.request.CapabilityRequest;
+import com.example.webflux_ms_capabilities.application.dto.response.CapabilityResponse;
 import com.example.webflux_ms_capabilities.application.handler.ICapabilityRestHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;
@@ -19,11 +21,9 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
@@ -89,5 +89,36 @@ public class CapabilityHandlerTest {
 
         Mockito.verify(validator).validate(any(CapabilityRequest.class));
         Mockito.verify(capabilityRestHandler, Mockito.never()).createCapability(any(CapabilityRequest.class));
+    }
+
+    @Test
+    public void test_get_capabilities_by_ids_success() {
+        List<Long> capabilityIds = Arrays.asList(1L, 2L, 3L);
+        CapabilityIdsRequest request = new CapabilityIdsRequest(capabilityIds);
+
+        List<CapabilityResponse> expectedCapabilities = Arrays.asList(
+                new CapabilityResponse(),
+                new CapabilityResponse()
+        );
+
+        ServerRequest serverRequest = MockServerRequest.builder()
+                .body(Mono.just(request));
+
+        Mockito.when(capabilityRestHandler.getCapabilitiesByIds(capabilityIds))
+                .thenReturn(Mono.just(expectedCapabilities));
+
+        // Act
+        Mono<ServerResponse> responseMono = capabilityHandler.getCapabilitiesByIds(serverRequest);
+
+        // Assert
+        StepVerifier.create(responseMono)
+                .expectNextMatches(serverResponse -> {
+                    assertEquals(HttpStatus.OK, serverResponse.statusCode());
+                    assertEquals(MediaType.APPLICATION_JSON, serverResponse.headers().getContentType());
+                    return true;
+                })
+                .verifyComplete();
+
+        Mockito.verify(capabilityRestHandler).getCapabilitiesByIds(capabilityIds);
     }
 }

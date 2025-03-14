@@ -221,6 +221,8 @@ public class CapabilityUseCaseTest {
         Mockito.when(capabilityPersistencePort.getAllCapabilities(page, size, asc, sortBy))
                 .thenReturn(Mono.just(emptyPageModel));
 
+        // No need to mock technologyPersistencePort as it shouldn't be called
+
         // Act
         Mono<CapabilityPageModel> result = capabilityUseCase.getCapabilities(page, size, asc, sortBy);
 
